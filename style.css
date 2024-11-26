@@ -1,0 +1,150 @@
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* remove default spacing */
+/* force styling of type through styling, rather than elements */
+
+* {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+/* min body height */
+
+body {
+  min-height: 100vh;
+}
+
+/* responsive images/videos */
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+@font-face {
+  font-family: 'Geostar';
+  src: url('./assets/fonts/Geostar-Regular.ttf');
+}
+
+@font-face {
+  font-family: 'Digital';
+  src: url('./assets/fonts/DigitalNumbers-Regular.ttf');
+}
+
+body{
+  background: #000;
+  display: flex;;
+  flex-direction: column;
+  padding-top: 65px;
+}
+
+.title{
+  font-family: 'Geostar';
+  font-size: 42px;
+  color: #44FF00;
+  align-self: center;
+  margin-bottom: 100px;
+}
+
+.inputSection{
+  display: grid;
+  padding: 0px 200px;
+  grid-template-columns: repeat(2,1fr);
+  justify-content: space-between;
+}
+
+.inputContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputContainer:nth-child(2){
+  justify-self: end;
+}
+
+.inputLabel{
+  font-family: 'Geostar';
+  font-size: 36px;
+  color: #44FF00;
+}
+
+.inputBinary,
+.outputBinary{
+  display: flex;
+  gap: 6px;
+}
+
+
+.binaryNumber{
+  color: #44FF00;
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  width: 60px;
+  height: 60px;
+  font-family: 'Digital';
+  font-size: 40px;
+  background-color: #2D2626;
+  cursor: pointer;
+}
+
+.binaryNumber > span{
+  height: fit-content;
+  display: flex;
+  align-self: center;
+}
+
+.inputField{
+  max-width: 180px;
+  height: 40px;
+  color: #44FF00;
+  font-size: 26px;
+  background-color: #4C4C4C;
+  border-radius: 4px;
+  text-align: right;
+  padding-right: 4px;
+  font-family: 'Digital';
+}
+
+.simulateButton{
+  margin-top: 20px;
+  color: #44FF00;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 261px;
+  height: 74px;
+  background-color: #161618;
+  border: none;
+  font-size: 32px;
+  font-family: 'Digital';
+  border-radius: 5px;
+  align-self: center;
+  cursor: pointer;
+}
+
+.simulateButton:hover{
+  background-color: #313135;
+}
+
+.outputBinary{
+  align-self: center;
+  margin-top: 20px;
+}
+
+.outputLabel{
+  margin-top: 90px;
+  color: #44FF00;
+  font-family: 'Geostar';
+  font-size: 32px;
+  align-self: center;
+}
