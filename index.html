@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
   <h1 class="title">Turing Machine Addition</h1>
   <section class="inputSection"serif>
-    <div class="inputContainer">
+    <div class="inputContainer" id="input-1">
       <div class="inputLabel">Input 1</div>
       <div class="inputBinary">
         <p class="binaryNumber">
@@ -39,12 +39,12 @@
         </p>
       
       </div>
-      <input type="text" class="inputField" placeholder="0"
-       ></input>
+      <input type="number" pattern="^[0-9*$]" class="inputField" placeholder="0"
+       >
     </div>
     
-    <div class="inputContainer">
-      <div class="inputLabel">Input 1</div>
+    <div class="inputContainer" id="input-2">
+      <div class="inputLabel">Input 2</div>
       <div class="inputBinary">
         <p class="binaryNumber">
           <span>0</span>
@@ -72,8 +72,7 @@
         </p>
       
       </div>
-      <input type="text" class="inputField" placeholder="0"
-       ></input>
+      <input type="number" pattern="^[0-9]*$" class="inputField" placeholder="0">
     </div>
   </section>
   <div class="outputLabel">Output</div>
@@ -105,8 +104,49 @@
     <p class="binaryNumber">
       <span>0</span>
     </p>
-  
   </div>
   <button class="simulateButton">Simulate</button>
+  <button class="transitionButton">Transition</button>
+
+<div class="transitionContainer hidden">
+  <div class="x-button">X</div>
+  <!-- Initial Tape Section -->
+  <div class="initial-tape">
+    <h2>Transition Table:</h2>
+    <div class="tape-display">
+      <p>Initial tape: <span class="tape">[_state_]</span></p>
+      <p>Initial head: <span class="head">^</span> (at leftmost bit of the first number)</p>
+    </div>
+  </div>
+
+  <!-- State and Tape Visualization -->
+  <div class="state-visualization">
+    <h3><span class="state"></span></h3>
+    <div>
+      <p><span class="tape-contents"></span></p>
+      <p><span class="head-position"></span></p>
+    </div>
+  </div>
+
+  <!-- State Transition Table -->
+  <div class="state-table">
+    <h3>State Transition Table:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>State</th>
+          <th>Read Symbol</th>
+          <th>Write Symbol</th>
+          <th>Move</th>
+          <th>Next State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Rows will be dynamically added here -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
 </body>
 </html>
