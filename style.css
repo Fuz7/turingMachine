@@ -54,10 +54,25 @@ body{
   margin-bottom: 100px;
 }
 
+.operation{
+  background-color: #2D2626;
+  color:#44FF00;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  font-size: 40px;
+  font-family: 'Digital';
+  align-items: center;
+  justify-self: center;
+  justify-content: center;
+  align-self: center;
+  cursor: pointer;
+}
+
 .inputSection{
   display: grid;
   padding: 0px 200px;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(3,1fr);
   justify-content: space-between;
 }
 
@@ -114,6 +129,17 @@ body{
   text-align: right;
   padding-right: 4px;
   font-family: 'Digital';
+}
+
+.outputContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.outputContainer .inputField{
+  margin-top: 20px;
+  
 }
 
 input::-webkit-outer-spin-button,
@@ -273,7 +299,6 @@ h3{
   position: relative;
   z-index: 2;
   display: inline-block;
-  transition: opacity 0.2s ease;
   background-color: #2D2626;
 }
   .binaryNumber .symbol-swapper {

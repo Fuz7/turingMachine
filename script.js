@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const x_button = document.querySelector(".x-button");
   const tableContainer = document.querySelector(".transitionContainer");
   const stateVisualization = document.querySelector(".state-visualization");
+  const operation = document.querySelector(".operation");
 
   const symbols = [
     "@",
@@ -34,6 +35,27 @@ document.addEventListener("DOMContentLoaded", () => {
     "!",
     "%",
   ];
+  operation.addEventListener("click", () => {
+    const outputBinary = document.querySelector(".outputBinary");
+    const binaryNumber = document.querySelector(".binaryNumber");
+    if (operation.textContent == "+") {
+      operation.textContent = "*";
+      for (let i = 0; i < 7; i++) {
+        const createBits = document.createElement("div");
+        const span = document.createElement("span");
+        span.textContent = "0";
+        createBits.classList.add("binaryNumber");
+        outputBinary.appendChild(createBits);
+        createBits.appendChild(span);
+      }
+    } else {
+      operation.textContent = "+";
+      for (let i = 0; i < 7; i++) {
+        const outputBinaryNumber = outputBinary.querySelector(".binaryNumber");
+        outputBinary.removeChild(outputBinaryNumber);
+      }
+    }
+  });
 
   x_button.addEventListener("click", () => {
     tableContainer.classList.toggle("hidden");
@@ -172,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
               // Set the duration and delay for the animation
               symbolElement.style.animationDuration = `${SWAP_DURATION}s`;
-              symbolElement.style.animationDelay = `${i * SWAP_DURATION}s`;
+              symbolElement.style.animationDelay = `${i * SWAP_DURATION}`;
 
               symbolSwapper.appendChild(symbolElement);
             }
@@ -283,52 +305,99 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Turing Machine simulation logic
   const simulateTuringMachine = (input1, input2) => {
-    const tape = `_${input1}+${input2}_`;
-    const tapeArr = tape.split("");
-    let headPosition = 1;
-    let state = "q0";
-    const transitions = [];
+    if (operation.textContent == "+") {
+      const tape = `_${input1}+${input2}_`;
+      const tapeArr = tape.split("");
+      let headPosition = 1;
+      let state = "q0";
+      const transitions = [];
 
-    // Initial tape visualization
-    updateTapeVisualization(tapeArr, headPosition, state);
-
-    while (state !== "q2") {
-      const currentSymbol = tapeArr[headPosition];
-      let writeSymbol = currentSymbol;
-      let move = "R";
-      let nextState = state;
-
-      if (state === "q0") {
-        if (currentSymbol === "+") {
-          nextState = "q1";
-        }
-      } else if (state === "q1") {
-        if (currentSymbol === "_") {
-          nextState = "q2";
-          move = "L";
-        }
-      }
-
-      tapeArr[headPosition] = writeSymbol;
-      transitions.push({
-        state,
-        readSymbol: currentSymbol,
-        writeSymbol,
-        move,
-        nextState,
-      });
-
-      state = nextState;
-      headPosition += move === "R" ? 1 : -1;
-
-      // Update tape visualization for each step
+      // Initial tape visualization
       updateTapeVisualization(tapeArr, headPosition, state);
-    }
 
-    return transitions;
+      while (state !== "q2") {
+        const currentSymbol = tapeArr[headPosition];
+        let writeSymbol = currentSymbol;
+        let move = "R";
+        let nextState = state;
+
+        if (state === "q0") {
+          if (currentSymbol === "+") {
+            nextState = "q1";
+          }
+        } else if (state === "q1") {
+          if (currentSymbol === "_") {
+            nextState = "q2";
+            move = "L";
+          }
+        }
+
+        tapeArr[headPosition] = writeSymbol;
+        transitions.push({
+          state,
+          readSymbol: currentSymbol,
+          writeSymbol,
+          move,
+          nextState,
+        });
+
+        state = nextState;
+        headPosition += move === "R" ? 1 : -1;
+
+        // Update tape visualization for each step
+        updateTapeVisualization(tapeArr, headPosition, state);
+      }
+      return transitions;
+    } else if (operation.textContent == "*") {
+      const tape = `_${input1}*${input2}_`;
+      const tapeArr = tape.split("");
+      let headPosition = 1;
+      let state = "q0";
+      const transitions = [];
+
+      // Initial tape visualization
+      updateTapeVisualization(tapeArr, headPosition, state);
+
+      while (state !== "q2") {
+        const currentSymbol = tapeArr[headPosition];
+        let writeSymbol = currentSymbol;
+        let move = "R";
+        let nextState = state;
+
+        if (state === "q0") {
+          if (currentSymbol === "*") {
+            nextState = "q1";
+          }
+        } else if (state === "q1") {
+          if (currentSymbol === "_") {
+            nextState = "q2";
+            move = "L";
+          }
+        }
+
+        tapeArr[headPosition] = writeSymbol;
+        transitions.push({
+          state,
+          readSymbol: currentSymbol,
+          writeSymbol,
+          move,
+          nextState,
+        });
+
+        state = nextState;
+        headPosition += move === "R" ? 1 : -1;
+
+        // Update tape visualization for each step
+        updateTapeVisualization(tapeArr, headPosition, state);
+      }
+      return transitions;
+    }
   };
 
   simulateButton.addEventListener("click", () => {
+    const outputContainer = document.querySelector(".outputContainer");
+    const inputTF = outputContainer.querySelector(".inputField");
+
     const input1BinaryNumbers = document
       .querySelector("#input-1")
       .querySelectorAll(".binaryNumber");
@@ -347,8 +416,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // for output binary
     const input1Decimal = binaryToDecimal(input1BinaryNumbers);
     const input2Decimal = binaryToDecimal(input2BinaryNumbers);
-
-    const resultDecimal = input1Decimal + input2Decimal;
+    let resultDecimal = 0;
+    if (operation.textContent == "+") {
+      resultDecimal = input1Decimal + input2Decimal;
+      inputTF.value = resultDecimal;
+    } else {
+      resultDecimal = input1Decimal * input2Decimal;
+      inputTF.value = resultDecimal;
+    }
 
     const resultBinaryArray = decimalToBinary(resultDecimal, 9);
 

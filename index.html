@@ -8,7 +8,7 @@
   <script src="script.js" defer></script>
 </head>
 <body>
-  <h1 class="title">Turing Machine Addition</h1>
+  <h1 class="title">Turing Machine</h1>
   <section class="inputSection"serif>
     <div class="inputContainer" id="input-1">
       <div class="inputLabel">Input 1</div>
@@ -42,7 +42,7 @@
       <input type="number" pattern="^[0-9*$]" class="inputField" placeholder="0"
        >
     </div>
-    
+    <div class="operation">+</div>
     <div class="inputContainer" id="input-2">
       <div class="inputLabel">Input 2</div>
       <div class="inputBinary">
@@ -75,6 +75,7 @@
       <input type="number" pattern="^[0-9]*$" class="inputField" placeholder="0">
     </div>
   </section>
+<section class="outputContainer">
   <div class="outputLabel">Output</div>
   <div class="outputBinary">
     <p class="binaryNumber">
@@ -105,6 +106,9 @@
       <span>0</span>
     </p>
   </div>
+  <input type="number" class="inputField" placeholder="0" disabled>
+</section>
+
   <button class="simulateButton">Simulate</button>
   <button class="transitionButton">Transition</button>
 
