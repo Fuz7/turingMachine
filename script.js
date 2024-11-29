@@ -143,7 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const binaryNumbers = container.querySelectorAll(".binaryNumber");
 
-        // Loop through each binary number display element
         binaryNumbers.forEach((binary, index) => {
           const span = binary.querySelector("span");
 
@@ -157,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Add animating class to trigger animation
             binary.classList.add("animating");
 
-            // Create a new swapper for the animation effect
+            // Add class to trigger animation
             const symbolSwapper = document.createElement("div");
             symbolSwapper.classList.add("symbol-swapper");
 
@@ -181,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
               symbolSwapper.appendChild(symbolElement);
             }
 
-            // Remove existing swapper if present
+            // Remove animating class
             const existingSwapper = binary.querySelector(".symbol-swapper");
             if (existingSwapper) {
               existingSwapper.remove();
