@@ -9,32 +9,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const stateVisualization = document.querySelector(".state-visualization");
   const operation = document.querySelector(".operation");
 
-  const symbols = [
-    "@",
-    "#",
-    "$",
-    "&",
-    "*",
-    "^",
-    "(",
-    ")",
-    "~",
-    "`",
-    "+",
-    "-",
-    "=",
-    "[",
-    "]",
-    "{",
-    "}",
-    "|",
-    "/",
-    "?",
-    "<",
-    ">",
-    "!",
-    "%",
-  ];
+  const symbols = (function(){
+    const charsArray=[]
+    for (let i = 97; i <= 122; i++) { // ASCII for 'a' (97) to 'z' (122)
+      charsArray.push(String.fromCharCode(i));
+    }
+    for (let i = 65; i <= 90; i++) { // ASCII for 'A' (65) to 'Z' (90)
+      charsArray.push(String.fromCharCode(i));
+    }
+    const symbols = [
+      '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '=', '+',
+      '[', ']', '{', '}', ';', ':', ',', '.', '<', '>', '/', '?', '|', '\\',
+      '~', '`', '"', '\'', 
+    ];
+    charsArray.push(...symbols);
+    return charsArray;
+
+  })()
   operation.addEventListener("click", () => {
     const outputBinary = document.querySelector(".outputBinary");
     const binaryNumber = document.querySelector(".binaryNumber");
@@ -55,6 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
         outputBinary.removeChild(outputBinaryNumber);
       }
     }
+    outputBinary.querySelectorAll(".binaryNumber").forEach((binary, index) => {
+      const span = binary.querySelector("span");
+      span.textContent = '0'
+    });
+    (document.querySelector(".outputContainer")).querySelector('.inputField').value = ''
   });
 
   x_button.addEventListener("click", () => {
@@ -82,6 +78,42 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   };
 
+  const animateBinary = async(element,duration,swapInterval,finalValue) => {
+
+      let count = 0;
+      const id = await setInterval(replaceContent,swapInterval);
+      function replaceContent(){
+        if(count < duration){
+          const randomSymbol = symbols[Math.floor(Math.random() * symbols.length)]
+          element.textContent = randomSymbol
+          count += swapInterval
+        }else{
+          element.textContent = finalValue
+          clearInterval(id)
+        }
+      }
+  }
+
+  const inputFieldAnimation = (input,duration,swapInterval,outputValue) =>{
+    let count = 0
+    const id = setInterval(replaceContent,swapInterval);
+
+    function replaceContent(){
+      if(count < duration){
+        const charArray = []
+        const charLength = input.value.length
+        while(charArray.length < charLength){
+          charArray.push(symbols[Math.floor(Math.random() * symbols.length)])
+        }
+        input.value = charArray.join('')
+        count += swapInterval
+      }else{
+        input.value = outputValue
+        clearInterval(id)
+      }
+    }
+  }
+
   inputContainers.forEach((container) => {
     const binaryNumbers = container.querySelectorAll(".binaryNumber");
     const inputField = container.querySelector(".inputField");
@@ -95,10 +127,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const newValue = currentValue === "0" ? "1" : "0";
 
         // !! SPEED CONTROL !!
-        const SWAP_DURATION = 0.15;
+        const SWAP_DURATION = 0.10;
         const SWAP_ITERATIONS = 9;
         const TOTAL_ANIMATION_TIME = SWAP_DURATION * SWAP_ITERATIONS;
-
+        inputField.disabled = true
         binary.classList.add("animating");
 
         const symbolSwapper = document.createElement("div");
@@ -135,13 +167,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
           const decimalValue = binaryToDecimal(binaryNumbers);
           inputField.value = decimalValue;
-
-          inputField.disabled = hasToggledBinary(binaryNumbers);
+          inputFieldAnimation(inputField,300,30,decimalValue)
+          inputField.disabled = false;
         }, TOTAL_ANIMATION_TIME * 1000 + 100);
       });
     });
-    inputField.addEventListener("keydown", (event) => {
-      if (event.key === "Enter") {
+    inputField.addEventListener("input", (event) => {
+
+        if(isNaN(inputField.value)){
+          inputField.value = inputField.value.replace(/\D/g, "");
+          return
+        }
+
         const input = inputField.value.trim();
 
         const isBinaryString = /^[01]+$/.test(input);
@@ -149,7 +186,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isBinaryString) {
           binaryArray = input.padStart(8, "0").slice(0, 8).split("");
-        } else {
+        } 
+        else {
           const decimal = parseInt(input, 10);
 
           if (isNaN(decimal) || decimal > 255) {
@@ -157,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
           }
 
-          binaryArray = decimalToBinary(decimal, 8);
+          binaryArray = decimalToBinary(decimal, 8).split('');
         }
 
         const binaryNumbers = container.querySelectorAll(".binaryNumber");
@@ -168,56 +206,12 @@ document.addEventListener("DOMContentLoaded", () => {
           const newValue = binaryArray[index] || "0";
 
           // If the binary digit is different from the current span value, animate it
-          if (span.textContent !== newValue) {
-            const SWAP_DURATION = 0.15;
-            const SWAP_ITERATIONS = 9;
-
-            // Add animating class to trigger animation
-            binary.classList.add("animating");
-
-            // Add class to trigger animation
-            const symbolSwapper = document.createElement("div");
-            symbolSwapper.classList.add("symbol-swapper");
-
-            // Create animated symbols
-            for (let i = 0; i < SWAP_ITERATIONS; i++) {
-              const symbolElement = document.createElement("div");
-              symbolElement.classList.add("symbol");
-
-              // Random symbols for animation, except for the last one
-              if (i === SWAP_ITERATIONS - 1) {
-                symbolElement.textContent = newValue; // Set the correct binary digit at the end
-              } else {
-                symbolElement.textContent =
-                  symbols[Math.floor(Math.random() * symbols.length)];
-              }
-
-              // Set the duration and delay for the animation
-              symbolElement.style.animationDuration = `${SWAP_DURATION}s`;
-              symbolElement.style.animationDelay = `${i * SWAP_DURATION}`;
-
-              symbolSwapper.appendChild(symbolElement);
-            }
-
-            // Remove animating class
-            const existingSwapper = binary.querySelector(".symbol-swapper");
-            if (existingSwapper) {
-              existingSwapper.remove();
-            }
-
-            // Append the new symbol swapper
-            binary.appendChild(symbolSwapper);
-
-            // After animation, update the span text to the correct value and remove animation class
-            setTimeout(() => {
-              span.textContent = newValue;
-              symbolSwapper.remove();
-              binary.classList.remove("animating");
-            }, SWAP_DURATION * SWAP_ITERATIONS * 1000 + index * 150);
-          }
+       
+            animateBinary(span,200 + (index * 150),50,newValue)
+          
         });
       }
-    });
+    );
 
     const observeBinaryChanges = () => {
       const observer = new MutationObserver(() => {
@@ -430,52 +424,13 @@ document.addEventListener("DOMContentLoaded", () => {
     outputBinary.querySelectorAll(".binaryNumber").forEach((binary, index) => {
       const span = binary.querySelector("span");
 
-      if (span.textContent !== resultBinaryArray[index]) {
+     
         const originalValue = span.textContent;
         const newValue = resultBinaryArray[index] || "0";
-
-        const SWAP_DURATION = 0.15;
-        const SWAP_ITERATIONS = 9;
-
-        binary.classList.add("animating");
-
-        const symbolSwapper = document.createElement("div");
-        symbolSwapper.classList.add("symbol-swapper");
-
-        for (let i = 0; i < SWAP_ITERATIONS; i++) {
-          const symbolElement = document.createElement("div");
-          symbolElement.classList.add("symbol");
-
-          // For the last iteration, show the target value
-          if (i === SWAP_ITERATIONS - 1) {
-            symbolElement.textContent = newValue;
-          } else {
-            // Random symbol for other iterations
-            symbolElement.textContent =
-              symbols[Math.floor(Math.random() * symbols.length)];
-          }
-
-          symbolElement.style.animationDuration = `${SWAP_DURATION}s`;
-          symbolElement.style.animationDelay = `${i * SWAP_DURATION}s`;
-
-          symbolSwapper.appendChild(symbolElement);
-        }
-
-        const existingSwapper = binary.querySelector(".symbol-swapper");
-        if (existingSwapper) {
-          existingSwapper.remove();
-        }
-
-        binary.appendChild(symbolSwapper);
-
-        setTimeout(() => {
-          span.textContent = newValue;
-          symbolSwapper.remove();
-          binary.classList.remove("animating");
-        }, SWAP_DURATION * SWAP_ITERATIONS * 1000);
-      }
+        animateBinary(span,(index * 150),40,newValue)
     });
-
+    const spanLenght = outputBinary.querySelectorAll(".binaryNumber").length
+    inputFieldAnimation(inputTF,(spanLenght*150),40,inputTF.value)
     // Clear existing transition and state
     transitionTableBody.textContent = "";
     stateVisualization.textContent = "";
