@@ -449,3 +449,134 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 });
+class TuringMachine {
+    constructor(tape) {
+        this.tape = tape.split(''); // Convert tape string to array
+        this.head = 0; // Head position
+        this.state = 'start'; // Initial state
+        this.steps = []; // Array to record all steps
+        this.halted = false; // Flag to ensure halt is recorded once
+        this.carry = 0;
+    }
+
+    recordStep() {
+        if(this.carry > 0 && this.state !== 'halt'){
+        this.steps.push({
+            tape: this.tape.join(''),
+            head: this.head,
+            state: 'carry'
+        });
+        }else{
+
+          this.steps.push({
+              tape: this.tape.join(''),
+              head: this.head,
+              state: this.state
+          });
+        }
+    }
+
+    step() {
+        if (this.halted) return false; // Exit if already halted
+
+        let char = this.tape[this.head] || '0';
+        this.recordStep(); // Record current state before action
+
+        switch (this.state) {
+            case 'start':
+                if (char === '1' || char === '0') {
+                    this.state = 'find_second_number';
+                    this.head++;
+                } else {
+                    this.state = 'halt';
+                }
+                break;
+
+            case 'find_second_number':
+                if (char === '#') { // Find separator
+                    this.state = 'add';
+                    this.head--;
+                } else {
+                    this.head++;
+                }
+                break;
+
+            case 'add':
+                while (this.head >= 0) {
+                    let a = parseInt(this.tape[this.head] || '0', 10);
+                    let b = parseInt(this.tape[this.head + 9] || '0', 10); // Adjust for offset
+                    let sum = a + b + this.carry;
+
+                    // Write result after separator
+                    this.tape[this.head + 18] = (sum % 2).toString();
+                    this.carry = Math.floor(sum / 2);
+                    this.head--;
+
+                    this.recordStep(); // Record each sub-step in addition
+                }
+
+                if (this.carry > 0) {
+                    this.tape.splice(18, 0, '1'); // Add carry if exists
+                    this.recordStep();
+                    this.state = 'carry'
+                }else{
+                  this.recordStep()
+                  this.state = 'add' 
+                }
+                this.state = 'halt';
+                break;
+            
+            case 'carry':
+                while (this.head >= 0) {
+                    let a = parseInt(this.tape[this.head] || '0', 10);
+                    let b = parseInt(this.tape[this.head + 9] || '0', 10); // Adjust for offset
+                    let sum = a + b + this.carry;
+
+                    // Write result after separator
+                    this.tape[this.head + 18] = (sum % 2).toString();
+                    this.carry = Math.floor(sum / 2);
+                    this.head--;
+
+                    this.recordStep(); // Record each sub-step in addition
+                }
+
+                if (this.carry > 0) {
+                    this.tape.splice(18, 0, '1'); // Add carry if exists
+                    this.state = 'carry'
+                    this.recordStep();
+                }else{
+                  this.state = 'add'
+                }
+                this.state = 'halt';
+                break;
+            
+            case 'halt':
+                if (!this.halted) {
+                    this.halted = true; // Ensure halt is recorded only once
+                    this.recordStep();
+                }
+                return false;
+
+        }
+
+        return true;
+    }
+
+    run() {
+        while (this.step());
+    }
+
+    getSteps() {
+        return this.steps;
+    }
+}
+
+// Initialize tape with two 8-bit binary numbers separated by one #
+let tape = '11000010#10110111       '; // No extra # at end
+let tm = new TuringMachine(tape);
+
+tm.run();
+
+// Retrieve all steps
+const steps = tm.getSteps();
+console.log(steps);
